@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Locale;
 
 import net.maxbraun.mirror.Air.AirData;
-import net.maxbraun.mirror.Body.BodyMeasure;
 import net.maxbraun.mirror.Commute.CommuteSummary;
 import net.maxbraun.mirror.DataUpdater.UpdateListener;
 import net.maxbraun.mirror.Weather.WeatherData;
@@ -28,9 +27,6 @@ public class HomeActivity extends Activity {
   private static final int[] NEWS_VIEW_IDS = new int[]{
       R.id.news_1,
       R.id.news_2,
-      R.id.news_3,
-      R.id.news_4,
-      R.id.news_5,
   };
 
   /**
@@ -84,11 +80,7 @@ public class HomeActivity extends Activity {
       if (airData != null) {
 
         // Populate the air quality index number and icon.
-        airQualityView.setText(Integer.toString(airData.aqi));
-        airQualityView.setCompoundDrawablesWithIntrinsicBounds(airData.icon, 0, 0, 0);
-        airQualityView.setVisibility(View.VISIBLE);
       } else {
-        airQualityView.setVisibility(View.GONE);
       }
     }
   };
@@ -113,21 +105,6 @@ public class HomeActivity extends Activity {
     }
   };
 
-  /**
-   * The listener used to populate the UI with body measurements.
-   */
-  private final UpdateListener<BodyMeasure[]> bodyUpdateListener =
-      new UpdateListener<BodyMeasure[]>() {
-        @Override
-        public void onUpdate(BodyMeasure[] bodyMeasures) {
-          if (bodyMeasures != null) {
-            bodyView.setBodyMeasures(bodyMeasures);
-            bodyView.setVisibility(View.VISIBLE);
-          } else {
-            bodyView.setVisibility(View.GONE);
-          }
-        }
-      };
 
   /**
    * The listener used to populate the UI with the commute summary.
@@ -158,10 +135,8 @@ public class HomeActivity extends Activity {
   private TextView temperatureView;
   private TextView weatherSummaryView;
   private TextView precipitationView;
-  private TextView airQualityView;
   private ImageView iconView;
   private TextView[] newsViews = new TextView[NEWS_VIEW_IDS.length];
-  private BodyView bodyView;
   private TextView commuteTextView;
   private ImageView travelModeView;
   private ImageView trafficTrendView;
@@ -169,7 +144,6 @@ public class HomeActivity extends Activity {
   private Weather weather;
   private Air air;
   private News news;
-  private Body body;
   private Commute commute;
   private Util util;
 
@@ -181,12 +155,10 @@ public class HomeActivity extends Activity {
     temperatureView = (TextView) findViewById(R.id.temperature);
     weatherSummaryView = (TextView) findViewById(R.id.weather_summary);
     precipitationView = (TextView) findViewById(R.id.precipitation);
-    airQualityView = (TextView) findViewById(R.id.air_quality);
     iconView = (ImageView) findViewById(R.id.icon);
     for (int i = 0; i < NEWS_VIEW_IDS.length; i++) {
       newsViews[i] = (TextView) findViewById(NEWS_VIEW_IDS[i]);
     }
-    bodyView = (BodyView) findViewById(R.id.body);
     commuteTextView = (TextView) findViewById(R.id.commute_text);
     travelModeView = (ImageView) findViewById(R.id.travel_mode);
     trafficTrendView = (ImageView) findViewById(R.id.traffic_trend);
@@ -194,7 +166,6 @@ public class HomeActivity extends Activity {
     weather = new Weather(this, weatherUpdateListener);
     air = new Air(this, airQualityUpdateListener);
     news = new News(newsUpdateListener);
-    body = new Body(this, bodyUpdateListener);
     commute = new Commute(this, commuteUpdateListener);
     util = new Util(this);
   }
@@ -205,7 +176,6 @@ public class HomeActivity extends Activity {
     weather.start();
     air.start();
     news.start();
-    body.start();
     commute.start();
   }
 
@@ -214,7 +184,6 @@ public class HomeActivity extends Activity {
     weather.stop();
     air.stop();
     news.stop();
-    body.stop();
     commute.stop();
     super.onStop();
   }

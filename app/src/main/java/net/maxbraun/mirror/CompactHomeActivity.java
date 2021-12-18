@@ -56,71 +56,59 @@ public class CompactHomeActivity extends Activity {
    * The listener used to populate the UI with weather data.
    */
   private final UpdateListener<WeatherData> weatherUpdateListener =
-      new UpdateListener<WeatherData>() {
-    @Override
-    public void onUpdate(WeatherData data) {
-      if (data != null) {
+          new UpdateListener<WeatherData>() {
+            @Override
+            public void onUpdate(WeatherData data) {
+              if (data != null) {
 
-        // Populate the current temperature rounded to a whole number.
-        String temperature = String.format(Locale.US, "%d°", Math.round(data.currentTemperature));
-        temperatureView.setText(temperature);
+                // Populate the current temperature rounded to a whole number.
+                String temperature = String.format(Locale.US, "%d°", Math.round(data.currentTemperature));
+                temperatureView.setText(temperature);
 
-        // Populate the icon for the current weather.
-        iconView.setImageResource(data.currentIcon);
+                // Populate the icon for the current weather.
+                iconView.setImageResource(data.currentIcon);
 
-        // Show all the views.
-        temperatureView.setVisibility(View.VISIBLE);
-        iconView.setVisibility(View.VISIBLE);
-      } else {
+                // Show all the views.
+                temperatureView.setVisibility(View.VISIBLE);
+                iconView.setVisibility(View.VISIBLE);
+              } else {
 
-        // Hide everything if there is no data.
-        temperatureView.setVisibility(View.GONE);
-        iconView.setVisibility(View.GONE);
-      }
-    }
-  };
+                // Hide everything if there is no data.
+                temperatureView.setVisibility(View.GONE);
+                iconView.setVisibility(View.GONE);
+              }
+            }
+          };
 
   /**
    * The listener used to populate the UI with the commute summary.
    */
   private final UpdateListener<Commute.CommuteSummary> commuteUpdateListener =
-      new UpdateListener<Commute.CommuteSummary>() {
-        @Override
-        public void onUpdate(Commute.CommuteSummary summary) {
-          if (summary != null) {
-            commuteTextView.setText(summary.text);
-            commuteTextView.setVisibility(View.VISIBLE);
-            travelModeView.setImageDrawable(summary.travelModeIcon);
-            travelModeView.setVisibility(View.VISIBLE);
-            if (summary.trafficTrendIcon != null) {
-              trafficTrendView.setImageDrawable(summary.trafficTrendIcon);
-              trafficTrendView.setVisibility(View.VISIBLE);
-            } else {
-              trafficTrendView.setVisibility(View.GONE);
+          new UpdateListener<Commute.CommuteSummary>() {
+            @Override
+            public void onUpdate(Commute.CommuteSummary summary) {
+              if (summary != null) {
+                commuteTextView.setText(summary.text);
+                commuteTextView.setVisibility(View.VISIBLE);
+                travelModeView.setImageDrawable(summary.travelModeIcon);
+                travelModeView.setVisibility(View.VISIBLE);
+                if (summary.trafficTrendIcon != null) {
+                  trafficTrendView.setImageDrawable(summary.trafficTrendIcon);
+                  trafficTrendView.setVisibility(View.VISIBLE);
+                } else {
+                  trafficTrendView.setVisibility(View.GONE);
+                }
+              } else {
+                commuteTextView.setVisibility(View.GONE);
+                travelModeView.setVisibility(View.GONE);
+                trafficTrendView.setVisibility(View.GONE);
+              }
             }
-          } else {
-            commuteTextView.setVisibility(View.GONE);
-            travelModeView.setVisibility(View.GONE);
-            trafficTrendView.setVisibility(View.GONE);
-          }
-        }
-      };
+          };
 
   /**
    * The listener used to populate the UI with body measurements.
    */
-  private final UpdateListener<Body.BodyMeasure[]> bodyUpdateListener =
-      new UpdateListener<Body.BodyMeasure[]>() {
-        @Override
-        public void onUpdate(Body.BodyMeasure[] bodyMeasures) {
-          if (bodyMeasures != null) {
-            bodyView.setBodyMeasures(bodyMeasures);
-            bodyView.setVisibility(View.VISIBLE);
-          } else {
-            bodyView.setVisibility(View.GONE);
-          }
-        }
-      };
 
   /**
    * The listener for Firebase Database UI settings updates.
@@ -148,13 +136,6 @@ public class CompactHomeActivity extends Activity {
       } else {
         hideCommute();
       }
-
-      Boolean bodySetting = dataSnapshot.child(UI_SETTING_BODY).getValue(Boolean.class);
-      if (bodySetting != null && bodySetting) {
-        showBody();
-      } else {
-        hideBody();
-      }
     }
 
     @Override
@@ -171,11 +152,9 @@ public class CompactHomeActivity extends Activity {
   private TextView commuteTextView;
   private ImageView travelModeView;
   private ImageView trafficTrendView;
-  private BodyView bodyView;
 
   private Weather weather;
   private Commute commute;
-  private Body body;
   private Util util;
   private DatabaseReference uiSettings;
 
@@ -199,8 +178,6 @@ public class CompactHomeActivity extends Activity {
     trafficTrendView = findViewById(R.id.traffic_trend);
 
     // Body
-    bodyView = findViewById(R.id.body);
-
     util = new Util(this);
     uiSettings = FirebaseDatabase.getInstance().getReference(UI_SETTINGS_PATH);
   }
@@ -219,7 +196,6 @@ public class CompactHomeActivity extends Activity {
 
     hideWeather();
     hideCommute();
-    hideBody();
 
     super.onStop();
   }
@@ -292,26 +268,6 @@ public class CompactHomeActivity extends Activity {
     }
     commuteView.setVisibility(View.GONE);
   }
-
-  /**
-   * Shows the body UI and starts regular updates.
-   */
-  private void showBody() {
-    if (body == null) {
-      body = new Body(CompactHomeActivity.this, bodyUpdateListener);
-      body.start();
-    }
-    bodyView.setVisibility(View.VISIBLE);
-  }
-
-  /**
-   * Hides the body UI and stops regular updates.
-   */
-  private void hideBody() {
-    if (body != null) {
-      body.stop();
-      body = null;
-    }
-    bodyView.setVisibility(View.GONE);
-  }
 }
+
+
